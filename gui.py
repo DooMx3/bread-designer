@@ -4,6 +4,7 @@ import constants as const
 
 
 class Button:
+    # TODO only one button until left mouse button is released
     BACKGROUND_COLOR = (22, 37, 52)
     HOVER_BG_COLOR = (33, 56, 77)
 
@@ -423,7 +424,7 @@ class Pin:
 
     def tick(self):
         if self.hitbox.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-            return self.x_cord, self.y_cord, self.empty
+            return self.x_cord, self.y_cord - ToolMenu.HEIGHT, self.empty
         return False
 
     def draw(self, window: pygame.Surface):
@@ -455,8 +456,13 @@ class BreadBoard:
     POSITION = (0, ToolMenu.HEIGHT)
 
     def __init__(self):
+        """
+        if attribute is not ment to be stored in breadboard state
+        its name should end with underscore
+        """
         self.pins_, self.empty_points_ = self.generate_pins()
-        self.image_ = pygame.image.load("images/breadboard.png")
+        self.empty_image_ = pygame.image.load("images/breadboard.png")
+        self.image_ = self.empty_image_
 
         self.pico_image_org_ = pygame.image.load("images/pico.png")
         self.pico_image_ = self.pico_image_org_
@@ -607,7 +613,7 @@ class BreadBoard:
                 r_pin = tuple(r_pin)
                 if r_pin != self.last_pin:
                     self.last_pin = r_pin
-                    print(r_pin, empty)
+                    # print(r_pin, empty)
                     return r_pin, empty
 
     def flip(self):
@@ -656,21 +662,24 @@ class BreadBoard:
         if point != last_point:
             self.wires[-1].add(point)
 
+    def update_image(self):
+        self.image_.blit(self.pico_image_, (0, 0))
+        self.image_ = pygame.image.load("images/breadboard.png")
+        if self.pico_pos is not None:
+            self.image_.blit(self.pico_image_, self.pico_pos)
+
+        for wire in self.wires:
+            wire.draw(self.image_)
+
+        for led in self.leds:
+            led.draw(self.image_)
+
     def draw(self, window):
         window.blit(self.image_, self.POSITION)
         for pin in self.pins_:
             pin.draw(window)
         for pin in self.empty_points_:
             pin.draw(window)
-        if self.pico_pos is not None:
-            x, y = self.pico_pos
-            window.blit(self.pico_image_, (x, y + ToolMenu.HEIGHT))
-
-        for wire in self.wires:
-            wire.draw(window)
-
-        for led in self.leds:
-            led.draw(window)
 
     def __eq__(self, other):
         c1 = self.wires == other.wires

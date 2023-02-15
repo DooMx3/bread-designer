@@ -98,7 +98,7 @@ class Files:
     def export_v2(self, image):
         filename = self.DEFAULT_NAME.replace("#", str(self.saves_counter))
         # image.save(self.DEFAULT_PATH + filename)
-        pygame.image.save(image, self.DEFAULT_PATH + filename, namehint="namehint")
+        pygame.image.save(image, self.DEFAULT_PATH + filename, "namehint")
         self.saves_counter += 1
         return self.path, filename
 

@@ -49,6 +49,13 @@ class Display:
         message = message.replace("#2", filename)
         return message
 
+    def export_image(self):
+        path, filename = self.files.export_v2(self.breadboard.image_)
+        message = self.EXPORT_MSG
+        message = message.replace("#1", path)
+        message = message.replace("#2", filename)
+        return message
+
     def settings_page(self):
         window_size_box = ValueBox(100, 50, 100)
 
@@ -92,6 +99,8 @@ class Display:
                 if popup.delete:
                     self.popups.remove(popup)
 
+            self.breadboard.update_image()
+
             if isinstance(resp, tuple):
                 color = resp
             elif isinstance(resp, str):
@@ -116,7 +125,7 @@ class Display:
                     self.states.add(self.breadboard.get_state())
                     action = None
             elif action == "export":
-                msg = self.export_state(self.breadboard.get_state())
+                msg = self.export_image()
                 self.add_popup(msg)
                 action = None
             elif action == "wire":
