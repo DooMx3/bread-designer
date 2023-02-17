@@ -372,7 +372,6 @@ class ColorPalette:
 
 
 class Diode:
-    YOFFSET = 7
     HEIGHT = 49
 
     def __init__(self, x, y, diode_image=None):
@@ -399,8 +398,8 @@ class Diode:
         self.diode_image = pixels.make_surface()
 
     def draw(self, window):
-        window.blit(self.diode_image, (self.x_cord, self.y_cord))
-        window.blit(self.pins_image, (self.x_cord, self.y_cord + self.diode_image.get_height()))
+        window.blit(self.diode_image, (self.x_cord + const.DIODE_X_OFFSET, self.y_cord))
+        window.blit(self.pins_image, (self.x_cord + const.DIODE_X_OFFSET, self.y_cord + self.diode_image.get_height()))
 
 
 class Pin:
@@ -656,8 +655,8 @@ class BreadBoard:
         if points:
             last_point = points[-1]
         x, y = point
-        x += 8
-        y += 8
+        x += const.WIRE_X_OFFSET
+        y += const.WIRE_Y_OFFSET
         point = x, y
         if point != last_point:
             self.wires[-1].add(point)
@@ -705,8 +704,16 @@ class Wire:
         self.points.append(point)
 
     def draw(self, window):
+        qw = self.WIDTH // 4
         if len(self.points) >= 2:
             pygame.draw.lines(window, self.color, False, self.points, self.WIDTH)
+
+            # draws both ends of a wire
+            for x, y in (self.points[0], self.points[-1]):
+                x_cord = x - const.WIRE_X_OFFSET // 2
+                y_cord = y - const.WIRE_Y_OFFSET // 2
+                pygame.draw.rect(window, self.color, (x_cord, y_cord, self.WIDTH, self.WIDTH))
+                pygame.draw.rect(window, (240, 240, 240), (x_cord + qw, y_cord + qw, self.WIDTH // 2, self.WIDTH // 2))
 
     def copy(self):
         return Wire(self.color, self.points)
