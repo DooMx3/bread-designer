@@ -715,6 +715,11 @@ class Wire:
                 pygame.draw.rect(window, self.color, (x_cord, y_cord, self.WIDTH, self.WIDTH))
                 pygame.draw.rect(window, (240, 240, 240), (x_cord + qw, y_cord + qw, self.WIDTH // 2, self.WIDTH // 2))
 
+            # round apexes
+            for point in self.points[1:-1]:
+                x, y = point
+                pygame.draw.circle(window, self.color, (x + 1, y + 1), self.WIDTH - 4)
+
     def copy(self):
         return Wire(self.color, self.points)
 
