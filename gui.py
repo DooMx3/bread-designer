@@ -1,6 +1,11 @@
 from math import sqrt
 import pygame
 import constants as const
+import utils
+import settings
+
+settings_file = settings.File()
+res_scale = settings_file.attributes["resolution_scale"] / 100
 
 
 class Button:
@@ -35,8 +40,7 @@ class Button:
         self.active = False
 
     def tick(self):
-        mouse_pos = pygame.mouse.get_pos()
-        self.hover = self.hitbox.collidepoint(mouse_pos)
+        self.hover = utils.hovered(self.hitbox, res_scale)
 
         if self.hover and pygame.mouse.get_pressed()[0] and not self.clicked:
             self.clicked = True
@@ -152,14 +156,16 @@ class ValueBox:
         clicked = pygame.mouse.get_pressed()[0]
         if clicked:
             if self.button_up.collidepoint(mouse_pos):
-                self.float_value **= self.EXPONENT
-                self.add_value += self.float_value
+                # self.float_value **= self.EXPONENT
+                # self.add_value += self.float_value
+                self.value += .05
             elif self.button_down.collidepoint(mouse_pos):
-                self.float_value **= 1/self.EXPONENT
-                self.add_value -= self.float_value
-            self.text_display = self.FONT.render(str(self.value), True, self.FONT_COLOR)
-            print(self.add_value)
-            self.value += self.add_value
+                # self.float_value **= 1/self.EXPONENT
+                # self.add_value -= self.float_value
+                self.value -= .05
+            self.text_display = self.FONT.render(str(round(self.value)), True, self.FONT_COLOR)
+            # print(self.add_value)
+            # self.value += self.add_value
         elif not clicked:
             # self.float_value = 1.1
             pass
@@ -347,10 +353,9 @@ class ColorPalette:
         if not self.active:
             return False
 
-        mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()[0]
         for box, color in zip(self.boxes, self.rgb_colors):
-            if box.collidepoint(mouse) and click:
+            if utils.hovered(box, res_scale) and click:
                 self.deactivate()
                 return color
         return False
@@ -359,9 +364,8 @@ class ColorPalette:
         if not self.active:
             return
 
-        mouse = pygame.mouse.get_pos()
         for box, color in zip(self.boxes, self.rgb_colors):
-            if not box.collidepoint(mouse):
+            if not utils.hovered(box, res_scale):
                 pygame.draw.rect(window, color, box)
             else:
                 inset_rect = box.inflate(-self.BORDER_WIDTH * 2, -self.BORDER_WIDTH * 2)
@@ -422,12 +426,12 @@ class Pin:
         self.inner_hitbox = pygame.Rect(x, y, self.PIN_SIZE, self.PIN_SIZE)
 
     def tick(self):
-        if self.hitbox.collidepoint(pygame.mouse.get_pos()) and pygame.mouse.get_pressed()[0]:
-            return self.x_cord, self.y_cord - ToolMenu.HEIGHT, self.empty
+        if utils.hovered(self.hitbox, res_scale) and pygame.mouse.get_pressed()[0]:
+            return self.x_cord, (self.y_cord - ToolMenu.HEIGHT), self.empty
         return False
 
     def draw(self, window: pygame.Surface):
-        if self.hitbox.collidepoint(pygame.mouse.get_pos()):
+        if utils.hovered(self.hitbox, res_scale):
             pygame.draw.rect(window, self.COLOR_OUTER_SELECT, self.hitbox)
             if not self.empty:
                 pygame.draw.rect(window, self.COLOR_INNER_SELECT, self.inner_hitbox)

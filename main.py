@@ -1,4 +1,6 @@
 import ctypes
+from time import sleep
+import pygame
 from gui import *
 import image
 
@@ -9,8 +11,12 @@ class Display:
 
     def __init__(self):
         pygame.init()
+
         self.size = (const.DISPLAY_WIDTH, const.DISPLAY_HEIGHT)
-        self.window = pygame.display.set_mode(self.size)
+        self.scaled_size = (const.DISPLAY_WIDTH * res_scale, const.DISPLAY_HEIGHT * res_scale)
+
+        self.window = pygame.Surface(self.size)
+        self.scaled_window = pygame.display.set_mode(self.scaled_size)
         self.breadboard = BreadBoard()
         self.files = image.Files()
         self.states = PreviousStates(self.breadboard.get_state())
@@ -86,6 +92,7 @@ class Display:
         reset_action = False
         running = True
         while running:
+            sleep(0.03)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -164,6 +171,9 @@ class Display:
             self.main_tool_menu.draw_palette(self.window)
             for popup in self.popups:
                 popup.draw(self.window)
+
+            scaled = pygame.transform.scale(self.window, self.scaled_size)
+            self.scaled_window.blit(scaled, (0, 0))
             pygame.display.flip()
 
         pygame.quit()

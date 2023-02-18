@@ -1,5 +1,5 @@
 from os import walk
-from PIL import Image, ImageDraw
+# from PIL import Image, ImageDraw
 from gui import *
 
 
