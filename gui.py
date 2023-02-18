@@ -668,6 +668,10 @@ class BreadBoard:
     def update_image(self):
         self.image_.blit(self.pico_image_, (0, 0))
         self.image_ = pygame.image.load("images/breadboard.png")
+
+        if self.flipped:
+            self.image_ = pygame.transform.rotate(self.image_, 180)
+
         if self.pico_pos is not None:
             self.image_.blit(self.pico_image_, self.pico_pos)
 
