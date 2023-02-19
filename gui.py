@@ -607,7 +607,11 @@ class BreadBoard:
 
     # gui operations
 
-    def tick(self):
+    def tick(self, keys):
+        for wire in self.wires:
+            wire.tick()
+            if wire.selected and keys[pygame.K_d]:
+                self.wires.remove(wire)
         for pin in self.pins_ + self.empty_points_:
             response = pin.tick()
             if response:
@@ -701,17 +705,59 @@ class BreadBoard:
 
 class Wire:
     WIDTH = 8
+    HITBOX_WIDTH = 19
 
     def __init__(self, color, points=()):
         self.points = list(points)
         self.fixed_points = list(map(lambda x: (x[0], x[1] - ToolMenu.HEIGHT), self.points))
         self.color = color
+        self.hitbox_color = utils.darken_color(color, 100)
+        self.hitboxes = []
+        self.hovered = False
+        self.selected = False
+
+    def tick(self):
+        self.hovered = False
+        for hb in self.hitboxes:
+            if utils.hovered(hb, res_scale):
+                self.hovered = True
+                break
+        if self.hovered and pygame.mouse.get_pressed(3)[0]:
+            self.selected = not self.selected
 
     def add(self, point):
+        if self.points:
+            last_x, last_y = self.points[-1]
+            new_x, new_y = point
+            width = abs(last_x - new_x)
+            height = abs(last_y - new_y)
+            x_cord = new_x if new_x < last_x else last_x
+            y_cord = new_y if new_y < last_y else last_y
+            x_cord -= 8
+            y_cord -= 8
+
+            inline = True
+            if width == 0:
+                width = self.HITBOX_WIDTH
+            elif height == 0:
+                height = self.HITBOX_WIDTH
+            else:
+                inline = False
+
+            if inline:
+                self.hitboxes.append(pygame.Rect(x_cord, y_cord, width, height))
+                print(self.hitboxes)
+
         self.points.append(point)
 
     def draw(self, window):
         qw = self.WIDTH // 4
+
+        if self.selected:
+            # draw hitbox
+            for hb in self.hitboxes:
+                pygame.draw.rect(window, self.hitbox_color, hb)
+
         if len(self.points) >= 2:
             pygame.draw.lines(window, self.color, False, self.points, self.WIDTH)
 

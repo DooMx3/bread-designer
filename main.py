@@ -98,11 +98,14 @@ class Display:
         running = True
         while running:
             pygame.time.Clock().tick(self.fps)
+
+            keys = pygame.key.get_pressed()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
 
-            point = self.breadboard.tick()
+            point = self.breadboard.tick(keys)
             if point:
                 point, pin_empty = point
             resp = self.main_tool_menu.tick()
