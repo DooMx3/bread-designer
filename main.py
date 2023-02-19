@@ -1,6 +1,4 @@
 import ctypes
-from time import sleep
-import pygame
 from gui import *
 import image
 
@@ -14,6 +12,8 @@ class Display:
 
         self.size = (const.DISPLAY_WIDTH, const.DISPLAY_HEIGHT)
         self.scaled_size = (const.DISPLAY_WIDTH * res_scale, const.DISPLAY_HEIGHT * res_scale)
+
+        self.fps = settings_file["fps"]
 
         self.window = pygame.Surface(self.size)
         self.scaled_window = pygame.display.set_mode(self.scaled_size)
@@ -97,6 +97,7 @@ class Display:
         reset_action = False
         running = True
         while running:
+            pygame.time.Clock().tick(self.fps)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -184,7 +185,7 @@ class Display:
 def main():
     if __name__ == "__main__":
         display = Display()
-        display.main_loop()
+        # display.main_loop()
         try:
             display.main_loop()
         except Exception as e:

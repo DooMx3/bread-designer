@@ -5,7 +5,7 @@ import utils
 import settings
 
 settings_file = settings.File()
-res_scale = settings_file.attributes["resolution_scale"] / 100
+res_scale = settings_file["resolution_scale"] / 100
 
 
 class Button:
@@ -620,7 +620,7 @@ class BreadBoard:
 
     def flip(self):
         self.flipped = not self.flipped
-        self.image_ = pygame.transform.rotate(self.image_, 180)
+        # self.image_ = pygame.transform.rotate(self.image_, 180)
 
     def place_pico(self, side="left"):
         if side == "left":
