@@ -185,10 +185,10 @@ def main():
     if __name__ == "__main__":
         display = Display()
         display.main_loop()
-        # try:
-        #     display.main_loop()
-        # except Exception as e:
-        #     ctypes.windll.user32.MessageBoxW(0, "code error: " + str(e), "Error", 0x10)
+        try:
+            display.main_loop()
+        except Exception as e:
+            ctypes.windll.user32.MessageBoxW(0, "code error: " + str(e), "Error", 0x10)
 
 
 main()
