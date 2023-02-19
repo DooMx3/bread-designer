@@ -62,6 +62,11 @@ class Display:
         message = message.replace("#2", filename)
         return message
 
+    def transform_display(self):
+        scaled = pygame.transform.scale(self.window, self.scaled_size)
+        self.scaled_window.blit(scaled, (0, 0))
+        pygame.display.flip()
+
     def settings_page(self):
         window_size_box = ValueBox(100, 50, 100)
 
@@ -79,7 +84,7 @@ class Display:
             self.window.fill(self.SETTINGS_BACKGROUND)
             self.settings_tool_menu.draw(self.window)
             window_size_box.draw(self.window)
-            pygame.display.flip()
+            self.transform_display()
 
     def add_popup(self, text):
         self.popups.append(PopUp(text))
@@ -92,7 +97,6 @@ class Display:
         reset_action = False
         running = True
         while running:
-            sleep(0.03)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -172,9 +176,7 @@ class Display:
             for popup in self.popups:
                 popup.draw(self.window)
 
-            scaled = pygame.transform.scale(self.window, self.scaled_size)
-            self.scaled_window.blit(scaled, (0, 0))
-            pygame.display.flip()
+            self.transform_display()
 
         pygame.quit()
 

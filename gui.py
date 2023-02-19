@@ -152,14 +152,13 @@ class ValueBox:
         self.button_down = pygame.Rect(self.BUTTON_DOWN_POS[0], self.BUTTON_DOWN_POS[1], self.BUTTON_SIZE[0], self.BUTTON_SIZE[1])
 
     def tick(self):
-        mouse_pos = pygame.mouse.get_pos()
         clicked = pygame.mouse.get_pressed()[0]
         if clicked:
-            if self.button_up.collidepoint(mouse_pos):
+            if utils.hovered(self.button_up, res_scale):
                 # self.float_value **= self.EXPONENT
                 # self.add_value += self.float_value
                 self.value += .05
-            elif self.button_down.collidepoint(mouse_pos):
+            elif utils.hovered(self.button_down, res_scale):
                 # self.float_value **= 1/self.EXPONENT
                 # self.add_value -= self.float_value
                 self.value -= .05
